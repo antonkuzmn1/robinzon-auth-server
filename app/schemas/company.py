@@ -1,7 +1,9 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing_extensions import Optional
+
+from app.schemas.admin import AdminOut
 
 
 class CompanyBase(BaseModel):
@@ -9,15 +11,10 @@ class CompanyBase(BaseModel):
     description: Optional[str] = None
 
 
-class CompanyCreate(CompanyBase):
-    pass
-
-
-class CompanyUpdate(CompanyBase):
-    name: Optional[str] = None
-
-
 class CompanyOut(CompanyBase):
     id: int
     created_at: datetime
     updated_at: datetime
+    admins: list[AdminOut] = []
+
+    model_config = ConfigDict(from_attributes=True)

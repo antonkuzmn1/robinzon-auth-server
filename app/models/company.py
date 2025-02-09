@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, DateTime, func, Boolean
+from sqlalchemy.orm import relationship
 
 from app.db import Base
+from app.models.admin_company_association import admin_company_association
 
 
 class Company(Base):
@@ -12,3 +14,5 @@ class Company(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
     deleted = Column(Boolean, default=False)
+
+    admins = relationship("Admin", secondary=admin_company_association, back_populates="companies")

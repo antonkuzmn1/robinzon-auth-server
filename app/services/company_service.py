@@ -1,30 +1,34 @@
+from typing import List, Optional
+
 from sqlalchemy.orm import Session
 
 from app.logger import logger
 from app.models.company import Company
-from app.schemas.company import CompanyCreate, CompanyUpdate
+from app.schemas.company import CompanyOut, CompanyBase
 
 
 class CompanyService:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_all_companies(self):
-        return self.db.query(Company).all()
+    def get_all_companies(self) -> List[CompanyOut]:
+        companies = self.db.query(Company).all()
+        return [CompanyOut.model_validate(company) for company in companies]
 
-    def get_company_by_id(self, company_id: int):
-        return self.db.query(Company).filter(Company.id == company_id).first()
+    def get_company_by_id(self, company_id: int) -> Optional[CompanyOut]:
+        company = self.db.query(Company).filter(Company.id == company_id).first()
+        return CompanyOut.model_validate(company) if company else None
 
-    def create_company(self, company_data: CompanyCreate):
+    def create_company(self, company_data: CompanyBase) -> Optional[CompanyOut]:
         new_company = Company(**company_data.model_dump())
         self.db.add(company_data)
         self.db.commit()
         self.db.refresh(company_data)
 
         logger.info(f"Created new company: {new_company.id} - {new_company.name}")
-        return company_data
+        return CompanyOut.model_validate(new_company, from_attributes=True)
 
-    def update_company(self, company_id, company_data: CompanyUpdate):
+    def update_company(self, company_id, company_data: CompanyBase) -> Optional[CompanyOut]:
         company = self.get_company_by_id(company_id)
         if not company:
             logger.warning(f"Attempt to update non-existent company: {company_id}")
@@ -39,9 +43,9 @@ class CompanyService:
         self.db.refresh(company)
 
         logger.info(f"Updated company: {company.id} - {company.name}")
-        return company
+        return CompanyOut.model_validate(company, from_attributes=True)
 
-    def delete_company(self, company_id: int):
+    def delete_company(self, company_id: int) -> Optional[CompanyOut]:
         company = self.get_company_by_id(company_id)
         if not company:
             logger.warning(f"Attempt to delete non-existent company: {company_id}")
@@ -53,4 +57,4 @@ class CompanyService:
         self.db.refresh(company)
 
         logger.info(f"Company marked as deleted: {company.id} - {company.name}")
-        return company
+        return CompanyOut.model_validate(company, from_attributes=True)
