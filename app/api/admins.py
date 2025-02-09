@@ -8,13 +8,6 @@ from typing import List
 
 router = APIRouter(prefix="/admins", tags=["Admins"])
 
-admin_company_association = Table(
-    "admin_company_association",
-    Base.metadata,
-    Column("admin_id", Integer, ForeignKey("admins.id"), primary_key=True),
-    Column("company_id", Integer, ForeignKey("companies.id"), primary_key=True),
-)
-
 @router.get("/", response_model=List[AdminOut])
 def get_all_admins(db: Session = Depends(get_db)):
     service = AdminService(db)

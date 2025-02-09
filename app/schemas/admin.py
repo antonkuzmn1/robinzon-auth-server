@@ -1,10 +1,9 @@
 from datetime import datetime
-from typing import Optional
-
+from typing import Optional, TYPE_CHECKING
 from pydantic import BaseModel, ConfigDict
 
-from app.schemas.company import CompanyOut
-
+if TYPE_CHECKING:
+    from .company import CompanyOut
 
 class AdminBase(BaseModel):
     username: str
@@ -29,6 +28,9 @@ class AdminOut(AdminBase):
     id: int
     created_at: datetime
     updated_at: datetime
-    companies: list[CompanyOut] = []
+    companies: list["CompanyOut"] = []
 
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        from_attributes = True
+
+AdminOut.update_forward_refs()

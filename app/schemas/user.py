@@ -18,6 +18,7 @@ class UserBase(BaseModel):
     cellular: Optional[str] = None
     post: Optional[str] = None
     company_id: int
+    password: str
 
 
 class UserOut(UserBase):
