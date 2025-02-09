@@ -1,8 +1,14 @@
-from sqlalchemy import Column, Integer, String, DateTime, func, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, func, Boolean, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
 from app.db import Base
-from app.models.admin_company_association import admin_company_association
+
+admin_company_association = Table(
+    "admin_company_association",
+    Base.metadata,
+    Column("admin_id", ForeignKey("admins.id"), primary_key=True),
+    Column("company_id", ForeignKey("companies.id"), primary_key=True),
+)
 
 
 class Admin(Base):

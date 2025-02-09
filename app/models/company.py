@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, func, Boolean
 from sqlalchemy.orm import relationship
 
 from app.db import Base
-from app.models.admin_company_association import admin_company_association
+from app.models.admin import admin_company_association
 
 
 class Company(Base):
