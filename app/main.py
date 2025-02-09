@@ -6,6 +6,7 @@ app = FastAPI()
 
 app.include_router(admins_router)
 
+
 @app.get("/")
 def main():
     return {

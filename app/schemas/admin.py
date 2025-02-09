@@ -29,7 +29,4 @@ class AdminUpdate(AdminBase):
 class AdminOut(AdminBase):
     id: int
     created_at: datetime
-    updated_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
+    updated_at: datetime

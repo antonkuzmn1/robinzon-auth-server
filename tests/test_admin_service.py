@@ -4,13 +4,16 @@ from app.services.admin_service import AdminService
 from app.models.admin import Admin
 from app.schemas.admin import AdminCreate, AdminUpdate
 
+
 @pytest.fixture
 def mock_db():
     return MagicMock()
 
+
 @pytest.fixture
 def admin_service(mock_db):
     return AdminService(mock_db)
+
 
 def test_create_admin(admin_service, mock_db):
     mock_db.add.return_value = None
@@ -31,6 +34,7 @@ def test_create_admin(admin_service, mock_db):
     mock_db.commit.assert_called_once()
     mock_db.refresh.assert_called_once()
 
+
 def test_update_admin(admin_service, mock_db):
     admin = Admin(
         id=1,
@@ -39,6 +43,7 @@ def test_update_admin(admin_service, mock_db):
         surname="surname",
         name="name",
     )
+
     mock_db.query.return_value.filter.return_value.first.return_value = admin
 
     update_data = AdminUpdate(surname="new_surname")
@@ -47,6 +52,7 @@ def test_update_admin(admin_service, mock_db):
     assert updated_admin.surname == "new_surname"
     mock_db.commit.assert_called_once()
     mock_db.refresh.assert_called_once()
+
 
 def test_delete_admin(admin_service, mock_db):
     admin = Admin(
