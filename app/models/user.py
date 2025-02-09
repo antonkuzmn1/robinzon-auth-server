@@ -1,18 +1,11 @@
-from sqlalchemy import Column, Integer, String, DateTime, func, Boolean, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, DateTime, func, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 
 from app.db import Base
 
-admin_company_association = Table(
-    "admin_company_association",
-    Base.metadata,
-    Column("admin_id", ForeignKey("admins.id"), primary_key=True),
-    Column("company_id", ForeignKey("companies.id"), primary_key=True),
-)
 
-
-class Admin(Base):
-    __tablename__ = 'admins'
+class User(Base):
+    __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(50), unique=True, nullable=False)
@@ -21,6 +14,8 @@ class Admin(Base):
     name = Column(String(100), nullable=False)
     middlename = Column(String(100), nullable=True)
     department = Column(String(100), nullable=True)
+    remote_workplace = Column(String(20), nullable=True)
+    local_workplace = Column(String(20), nullable=True)
     phone = Column(String(20), nullable=True)
     cellular = Column(String(20), nullable=True)
     post = Column(String(100), nullable=True)
@@ -28,4 +23,5 @@ class Admin(Base):
     updated_at = Column(DateTime, onupdate=func.now())
     deleted = Column(Boolean, default=False)
 
-    companies = relationship("Company", secondary=admin_company_association, back_populates="admins")
+    company_id = Column(Integer, ForeignKey('companies.id'), nullable=False)
+    company = relationship("Company", back_populates="users")

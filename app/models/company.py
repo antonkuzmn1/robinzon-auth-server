@@ -16,3 +16,4 @@ class Company(Base):
     deleted = Column(Boolean, default=False)
 
     admins = relationship("Admin", secondary=admin_company_association, back_populates="companies")
+    users = relationship("User", back_populates="company")

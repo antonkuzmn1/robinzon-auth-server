@@ -21,9 +21,9 @@ class CompanyService:
 
     def create_company(self, company_data: CompanyBase) -> Optional[CompanyOut]:
         new_company = Company(**company_data.model_dump())
-        self.db.add(company_data)
+        self.db.add(new_company)
         self.db.commit()
-        self.db.refresh(company_data)
+        self.db.refresh(new_company)
 
         logger.info(f"Created new company: {new_company.id} - {new_company.name}")
         return CompanyOut.model_validate(new_company, from_attributes=True)

@@ -5,7 +5,7 @@ from fastapi.params import Depends
 from sqlalchemy.orm import Session
 
 from app.db import get_db
-from app.schemas.company import CompanyOut, CompanyCreate, CompanyUpdate
+from app.schemas.company import CompanyOut, CompanyBase
 from app.services.company_service import CompanyService
 
 router = APIRouter(prefix="/companies", tags=["companies"])
@@ -24,13 +24,13 @@ def get_company_by_id(company_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=CompanyOut)
-def create_company(company: CompanyCreate, db: Session = Depends(get_db)):
+def create_company(company: CompanyBase, db: Session = Depends(get_db)):
     service = CompanyService(db)
     return service.create_company(company)
 
 
 @router.put("/{company_id}", response_model=CompanyOut)
-def update_company(company_id: int, company: CompanyUpdate, db: Session = Depends(get_db)):
+def update_company(company_id: int, company: CompanyBase, db: Session = Depends(get_db)):
     service = CompanyService(db)
     return service.update_company(company_id, company)
 
