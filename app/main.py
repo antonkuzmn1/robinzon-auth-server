@@ -4,6 +4,8 @@ from app.api.companies import router as companies_router
 from app.api.users import router as users_router
 from app.config import settings
 
+print(settings)
+print(type(settings))
 app = FastAPI()
 
 app.include_router(admins_router)
