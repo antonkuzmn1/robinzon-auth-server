@@ -6,7 +6,9 @@ from app.config import settings
 
 print(settings)
 print(type(settings))
+print(f"app before init: {globals().get('app', None)}")
 app = FastAPI()
+print(f"app after init: {type(app)}")
 
 # app.include_router(admins_router)
 # app.include_router(companies_router)
