@@ -15,6 +15,7 @@ app = FastAPI()
 
 @app.get("/")
 def main():
+    print(f"settings is of type: {type(settings)}")
     return {
         "message": "test!",
         "debug": settings.DEBUG,
