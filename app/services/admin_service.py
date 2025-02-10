@@ -37,6 +37,8 @@ class AdminService(BaseService):
         if "password" in update_data:
             update_data["password"] = pwd_context.hash(update_data["password"])
 
+        update_data.pop('password', None)
+
         for key, value in update_data.items():
             setattr(admin, key, value)
 
@@ -44,7 +46,10 @@ class AdminService(BaseService):
         self.db.refresh(admin)
 
         logger.info(f"Updated admin: {admin.id} - {admin.username}")
-        return AdminOut.model_validate(admin, from_attributes=True)
+
+        admin_out = AdminOut.model_validate(admin, from_attributes=True)
+
+        return admin_out
 
     def create_m2m_admin_company(self, admin_id: int, company_id: int) -> Optional[AdminOut]:
         admin = self.get_by_id(admin_id)

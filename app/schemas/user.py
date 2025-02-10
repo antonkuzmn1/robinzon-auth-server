@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 from app.schemas.company import CompanyOut
 
@@ -26,5 +26,3 @@ class UserOut(UserBase):
     created_at: datetime
     updated_at: datetime
     company: CompanyOut
-
-    model_config = ConfigDict(from_attributes=True)

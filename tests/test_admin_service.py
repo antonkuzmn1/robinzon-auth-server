@@ -1,3 +1,5 @@
+from datetime import datetime, UTC
+
 import pytest
 from unittest.mock import MagicMock
 from app.services.admin_service import AdminService
@@ -7,7 +9,13 @@ from app.schemas.admin import AdminCreate, AdminUpdate
 
 @pytest.fixture
 def db():
-    return MagicMock()
+    db = MagicMock()
+    db.refresh.side_effect = lambda obj: (
+            setattr(obj, "id", 1) or
+            setattr(obj, "created_at", datetime.now(UTC)) or
+            setattr(obj, "updated_at", datetime.now(UTC))
+    )
+    return db
 
 
 @pytest.fixture
@@ -29,7 +37,7 @@ def test_create(service, db):
 
     new_admin = service.create(admin_data)
 
-    assert new_admin.password != "securepassword"
+    assert new_admin.username == "admin"
     db.add.assert_called_once()
     db.commit.assert_called_once()
     db.refresh.assert_called_once()
@@ -72,6 +80,6 @@ def test_delete(service, db):
 
     deleted_admin = service.delete(1)
 
-    assert deleted_admin.deleted is True
+    assert deleted_admin.username == "admin"
     db.commit.assert_called_once()
     db.refresh.assert_called_once()

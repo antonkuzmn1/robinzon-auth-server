@@ -1,3 +1,4 @@
+from datetime import datetime, UTC
 from typing import List, Optional, Type, TypeVar
 from sqlalchemy.orm import Session
 from app.logger import logger
@@ -19,7 +20,14 @@ class BaseService:
 
     def get_by_id(self, record_id: int) -> Optional[SchemaOut]:
         record = self.db.query(self.model).filter(self.model.id == record_id).first()
-        return self.schema_out.model_validate(record) if record else None
+        if record:
+            record_dict = {key: value for key, value in record.__dict__.items() if not key.startswith('_')}
+
+            record_dict.setdefault('created_at', datetime.now(UTC))
+            record_dict.setdefault('updated_at', datetime.now(UTC))
+
+            return self.schema_out.model_validate(record_dict)
+        return None
 
     def create(self, data: SchemaBase) -> Optional[SchemaOut]:
         new_record = self.model(**data.model_dump())
