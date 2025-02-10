@@ -1,5 +1,5 @@
 from datetime import datetime, UTC
-from typing import List, Optional, Type, TypeVar
+from typing import List, Optional, Type, TypeVar, cast
 from sqlalchemy.orm import Session
 from app.logger import logger
 
@@ -19,7 +19,7 @@ class BaseService:
         return [self.schema_out.model_validate(record) for record in records]
 
     def get_by_id(self, record_id: int) -> Optional[SchemaOut]:
-        record = self.db.query(self.model).filter(self.model.id == record_id).first()
+        record = self.db.query(self.model).filter(cast("ColumnElement[bool]", self.model.id == record_id)).first()
         if record:
             record_dict = {key: value for key, value in record.__dict__.items() if not key.startswith('_')}
 
@@ -39,7 +39,7 @@ class BaseService:
         return self.schema_out.model_validate(new_record, from_attributes=True)
 
     def update(self, record_id: int, data: SchemaBase) -> Optional[SchemaOut]:
-        record = self.db.query(self.model).filter(self.model.id == record_id).first()
+        record = self.db.query(self.model).filter(cast("ColumnElement[bool]", self.model.id == record_id)).first()
         if not record:
             logger.warning(f"Attempt to update non-existent {self.model.__name__}: {record_id}")
             return None
@@ -55,7 +55,7 @@ class BaseService:
         return self.schema_out.model_validate(record, from_attributes=True)
 
     def delete(self, record_id: int) -> Optional[SchemaOut]:
-        record = self.db.query(self.model).filter(self.model.id == record_id).first()
+        record = self.db.query(self.model).filter(cast("ColumnElement[bool]", self.model.id == record_id)).first()
         if not record:
             logger.warning(f"Attempt to delete non-existent {self.model.__name__}: {record_id}")
             return None
