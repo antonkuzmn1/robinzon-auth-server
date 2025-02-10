@@ -23,11 +23,11 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t robinzon-auth-server .
+          docker build -t antonkuzmn1/robinzon-auth-server .
 
       - name: Push Docker image to Docker Hub
         run: |
-          docker push robinzon-auth-server
+          docker push antonkuzmn1/robinzon-auth-server
 
       - name: SSH to remote server and deploy
         uses: appleboy/ssh-action@v0.1.5
