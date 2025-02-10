@@ -1,12 +1,14 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy import Table, Column, Integer, ForeignKey
-from sqlalchemy.orm import Session
-from app.services.admin_service import AdminService
-from app.db import get_db, Base
-from app.schemas.admin import AdminCreate, AdminOut, AdminUpdate
 from typing import List
 
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.db import get_db
+from app.schemas.admin import AdminCreate, AdminOut, AdminUpdate
+from app.services.admin_service import AdminService
+
 router = APIRouter(prefix="/admins", tags=["Admins"])
+
 
 @router.get("/", response_model=List[AdminOut])
 def get_all_admins(db: Session = Depends(get_db)):
