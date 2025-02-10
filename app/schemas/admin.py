@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from app.schemas.company import CompanyOut
+# from app.schemas.company import CompanyOut
 
 
 class AdminBase(BaseModel):
@@ -29,4 +29,4 @@ class AdminOut(AdminBase):
     id: int
     created_at: datetime
     updated_at: datetime
-    companies: list[CompanyOut] = []
+    # companies: list[CompanyOut] = []
