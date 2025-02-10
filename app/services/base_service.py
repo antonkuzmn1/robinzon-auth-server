@@ -20,7 +20,12 @@ class BaseService:
         def _to_dict(obj):
             return {key: value for key, value in obj.__dict__.items() if not key.startswith('_')}
 
-        return [self.schema_out.model_validate(_to_dict(record)) for record in records]
+        return [
+            self.schema_out.model_validate(
+                {**_to_dict(record), "updated_at": record.updated_at or datetime.now()}
+            )
+            for record in records
+        ]
 
     def get_by_id(self, record_id: int) -> Optional[SchemaOut]:
         record = self.db.query(self.model).filter(cast("ColumnElement[bool]", self.model.id == record_id)).first()
