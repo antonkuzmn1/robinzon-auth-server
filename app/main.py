@@ -6,11 +6,12 @@ from app.api.companies import router as companies_router
 from app.api.users import router as users_router
 from app.config import settings
 from app.db import create_db, delete_db
+from app.db import Base, create_db
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    create_db()
+    # create_db()
     yield
     # delete_db()
 app = FastAPI(lifespan=lifespan)
