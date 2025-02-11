@@ -27,6 +27,12 @@ class BaseService:
             for record in records
         ]
 
+    def get_by_username(self, username: str) -> Optional[T]:
+        return self.db.query(self.model).filter(
+            cast("ColumnElement[bool]", self.model.username == username)
+        ).first()
+
+
     def get_by_id(self, record_id: int) -> Optional[SchemaOut]:
         record = self.db.query(self.model).filter(cast("ColumnElement[bool]", self.model.id == record_id)).first()
         if record:

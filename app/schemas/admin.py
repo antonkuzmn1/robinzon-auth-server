@@ -27,6 +27,9 @@ class AdminUpdate(AdminBase):
 
 class AdminOut(AdminBase):
     id: int
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
     companies: list[CompanyOut] = []
+
+    class Config:
+        from_attributes = True

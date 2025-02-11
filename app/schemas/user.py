@@ -23,6 +23,9 @@ class UserBase(BaseModel):
 
 class UserOut(UserBase):
     id: int
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
     company: CompanyOut
+
+    class Config:
+        from_attributes = True

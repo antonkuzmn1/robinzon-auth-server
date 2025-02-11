@@ -1,12 +1,14 @@
-from typing import List
+from typing import List, Annotated
 
-from fastapi import APIRouter
-from fastapi.params import Depends
+from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.db import get_db
 from app.schemas.user import UserOut, UserBase
+from app.schemas.token import Token
 from app.services.user_service import UserService
+
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -39,3 +41,16 @@ def update_user(user_id: int, user: UserBase, db: Session = Depends(get_db)):
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     service = UserService(db)
     return service.delete(user_id)
+
+
+@router.post("/login", response_model=Token)
+def login_for_admin_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)):
+    service = UserService(db)
+    user = service.authenticate_user(form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password"
+        )
+    access_token = UserService.create_user_token(user)
+    return {"access_token": access_token, "token_type": "bearer"}

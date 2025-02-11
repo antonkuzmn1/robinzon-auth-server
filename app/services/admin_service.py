@@ -6,19 +6,20 @@ from sqlalchemy.orm import Session
 from app.logger import logger
 from app.models import Admin
 from app.schemas.admin import AdminCreate, AdminUpdate, AdminOut
+from app.services.auth_service import AuthService
 from app.services.base_service import BaseService
 from app.services.company_service import CompanyService
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
+auth_service = AuthService()
 
 class AdminService(BaseService):
-    def __init__(self, db: Session, ):
+    def __init__(self, db: Session):
         super().__init__(db, Admin, AdminOut)
 
     def create(self, admin_data: AdminCreate) -> Optional[AdminOut]:
         hashed_password = pwd_context.hash(admin_data.password)
-        new_admin = Admin(**admin_data.model_dump(exclude={"password"}), password=hashed_password)
+        new_admin = Admin(**admin_data.model_dump(exclude={"password"}), hashed_password=hashed_password)
         self.db.add(new_admin)
         self.db.commit()
         self.db.refresh(new_admin)
@@ -82,3 +83,18 @@ class AdminService(BaseService):
         else:
             logger.warning("Admin or company not found")
             return None
+
+    @staticmethod
+    def verify_password(plain_password: str, hashed_password: str) -> bool:
+        return pwd_context.verify(plain_password, hashed_password)
+
+    def authenticate_admin(self, username: str, password: str):
+        admin = self.get_by_username(username)
+        if not admin or not self.verify_password(password, admin.hashed_password):
+            return None
+        return admin
+
+    @classmethod
+    def create_admin_token(cls, admin) -> str:
+        token_data = {"sub": admin.username, "role": "admin"}
+        return auth_service.create_access_token(token_data)

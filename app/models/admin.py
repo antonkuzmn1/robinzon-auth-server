@@ -16,7 +16,7 @@ class Admin(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(50), unique=True, nullable=False)
-    password = Column(String(60), nullable=False)
+    hashed_password = Column(String(60), nullable=False)
     surname = Column(String(100), nullable=False)
     name = Column(String(100), nullable=False)
     middlename = Column(String(100), nullable=True)
