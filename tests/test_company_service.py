@@ -42,6 +42,7 @@ def test_create(service, db):
     db.commit.assert_called_once()
     db.refresh.assert_called_once()
 
+
 def test_update(service, db):
     company = Company(name="company")
 

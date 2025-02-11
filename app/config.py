@@ -1,4 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class Settings(BaseSettings):
@@ -9,7 +12,7 @@ class Settings(BaseSettings):
     DB_NAME: str
 
     SECRET_KEY: str
-    DEBUG: bool = False
+    DEBUG: bool
 
     @property
     def database_url(self):

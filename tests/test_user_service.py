@@ -3,9 +3,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from app.models.user import User
+from app.models import User
 from app.schemas.user import UserBase
 from app.services.user_service import UserService
+
 
 @pytest.fixture
 def company_mock():
@@ -14,6 +15,7 @@ def company_mock():
     company.name = "Test Company"
     company.description = "Description of Test Company"
     return company
+
 
 @pytest.fixture
 def db(company_mock):
@@ -61,6 +63,7 @@ def test_create(service, db):
 
     assert entity.surname == "surname"
 
+
 def test_update(service, db):
     data = User(
         id=1,
@@ -85,6 +88,7 @@ def test_update(service, db):
     assert updated_entity.surname == "new_surname"
     db.commit.assert_called_once()
     db.refresh.assert_called_once()
+
 
 def test_delete(service, db):
     data = User(

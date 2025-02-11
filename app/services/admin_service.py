@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from app.logger import logger
-from app.models.admin import Admin
+from app.models import Admin
 from app.schemas.admin import AdminCreate, AdminUpdate, AdminOut
 from app.services.base_service import BaseService
 from app.services.company_service import CompanyService
@@ -13,7 +13,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class AdminService(BaseService):
-    def __init__(self, db: Session,):
+    def __init__(self, db: Session, ):
         super().__init__(db, Admin, AdminOut)
 
     def create(self, admin_data: AdminCreate) -> Optional[AdminOut]:
