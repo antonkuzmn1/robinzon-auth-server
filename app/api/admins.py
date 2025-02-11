@@ -6,11 +6,11 @@ from sqlalchemy.orm import Session
 
 from app.db import get_db
 from app.dependecies.auth import get_current_admin
-from app.models import Admin
+
 from app.schemas.admin import AdminCreate, AdminOut, AdminUpdate
 from app.schemas.token import Token
 from app.services.admin_service import AdminService
-from tests.test_company_service import service
+
 
 router = APIRouter(prefix="/admins", tags=["Admins"])
 
