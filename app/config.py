@@ -5,14 +5,14 @@ load_dotenv()
 
 
 class Settings(BaseSettings):
-    DB_HOST: str
-    DB_PORT: int
-    DB_USER: str
-    DB_PASS: str
-    DB_NAME: str
+    DB_HOST: str = ""
+    DB_PORT: int = ""
+    DB_USER: str = ""
+    DB_PASS: str = ""
+    DB_NAME: str = ""
 
-    SECRET_KEY: str
-    DEBUG: bool
+    SECRET_KEY: str = ""
+    DEBUG: bool = False
 
     @property
     def database_url(self):
