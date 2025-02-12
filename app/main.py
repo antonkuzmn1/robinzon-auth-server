@@ -25,5 +25,5 @@ def main():
     return {
         "message": "test!",
         "debug": settings.DEBUG,
-        "test": 11,
+        "test": 12,
     }
