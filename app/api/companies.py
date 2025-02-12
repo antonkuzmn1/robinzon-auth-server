@@ -4,7 +4,7 @@ from fastapi import APIRouter
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
 
-from app.db import get_db
+from app.core.db import get_db
 from app.schemas.company import CompanyOut, CompanyBase
 from app.services.company_service import CompanyService
 

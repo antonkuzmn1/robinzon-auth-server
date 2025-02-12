@@ -1,8 +1,12 @@
 from datetime import datetime, timedelta, timezone
 import jwt
 from jwt import PyJWTError
+from passlib.context import CryptContext
 
-from app.config import settings
+from app.core.config import settings
+
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class AuthService:
@@ -27,3 +31,11 @@ class AuthService:
             return payload
         except PyJWTError:
             return None
+
+    @staticmethod
+    def hash_password(password: str) -> str:
+        return pwd_context.hash(password)
+
+    @staticmethod
+    def verify_password(plain_password: str, hashed_password: str) -> bool:
+        return pwd_context.verify(plain_password, hashed_password)
