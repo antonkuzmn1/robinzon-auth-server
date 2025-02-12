@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from app.db import get_db
+from app.core.db import get_db
 from app.dependecies.auth import get_current_admin
 
 from app.schemas.admin import AdminCreate, AdminOut, AdminUpdate

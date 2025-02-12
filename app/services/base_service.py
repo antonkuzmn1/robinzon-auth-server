@@ -1,7 +1,6 @@
-from datetime import datetime, UTC
-from typing import List, Optional, Type, TypeVar, cast
-from sqlalchemy.orm import Session
-from app.logger import logger
+from typing import List, Optional, Type, TypeVar
+from app.repositories.base_repo import BaseRepository
+
 
 T = TypeVar("T")
 SchemaOut = TypeVar("SchemaOut")
@@ -9,75 +8,38 @@ SchemaBase = TypeVar("SchemaBase")
 
 
 class BaseService:
-    def __init__(self, db: Session, model: Type[T], schema_out: Type[SchemaOut]):
-        self.db = db
-        self.model = model
+    def __init__(self, repository: BaseRepository, schema_out: Type[SchemaOut]):
+        self.repository = repository
         self.schema_out = schema_out
 
     def get_all(self) -> List[SchemaOut]:
-        records = self.db.query(self.model).all()
+        records = self.repository.get_all()
+        return [self.schema_out.from_orm(record) for record in records]
 
-        def _to_dict(obj):
-            return {key: value for key, value in obj.__dict__.items() if not key.startswith('_')}
-
-        return [
-            self.schema_out.model_validate(
-                {**_to_dict(record), "updated_at": record.updated_at or datetime.now()}
-            )
-            for record in records
-        ]
-
-    def get_by_username(self, username: str) -> Optional[T]:
-        return self.db.query(self.model).filter(
-            cast("ColumnElement[bool]", self.model.username == username)
-        ).first()
-
-
-    def get_by_id(self, record_id: int) -> Optional[SchemaOut]:
-        record = self.db.query(self.model).filter(cast("ColumnElement[bool]", self.model.id == record_id)).first()
+    def get_by_username(self, username: str) -> Optional[SchemaOut]:
+        record = self.repository.get_by_username(username)
         if record:
-            record_dict = {key: value for key, value in record.__dict__.items() if not key.startswith('_')}
-
-            record_dict.setdefault('created_at', datetime.now(UTC))
-            record_dict.setdefault('updated_at', datetime.now(UTC))
-
-            return self.schema_out.model_validate(record_dict)
+            return self.schema_out.from_orm(record)
         return None
 
-    def create(self, data: SchemaBase) -> Optional[SchemaOut]:
-        new_record = self.model(**data.model_dump())
-        self.db.add(new_record)
-        self.db.commit()
-        self.db.refresh(new_record)
+    def get_by_id(self, record_id: int) -> Optional[SchemaOut]:
+        record = self.repository.get_by_id(record_id)
+        if record:
+            return self.schema_out.from_orm(record)
+        return None
 
-        logger.info(f"Created new {self.model.__name__}: {new_record.id}")
-        return self.schema_out.model_validate(new_record, from_attributes=True)
+    def create(self, data: SchemaBase) -> SchemaOut:
+        record = self.repository.create(data)
+        return self.schema_out.from_orm(record)
 
     def update(self, record_id: int, data: SchemaBase) -> Optional[SchemaOut]:
-        record = self.db.query(self.model).filter(cast("ColumnElement[bool]", self.model.id == record_id)).first()
-        if not record:
-            logger.warning(f"Attempt to update non-existent {self.model.__name__}: {record_id}")
-            return None
-
-        update_data = data.model_dump(exclude_unset=True)
-        for key, value in update_data.items():
-            setattr(record, key, value)
-
-        self.db.commit()
-        self.db.refresh(record)
-
-        logger.info(f"Updated {self.model.__name__}: {record.id}")
-        return self.schema_out.model_validate(record, from_attributes=True)
+        record = self.repository.update(record_id, data)
+        if record:
+            return self.schema_out.from_orm(record)
+        return None
 
     def delete(self, record_id: int) -> Optional[SchemaOut]:
-        record = self.db.query(self.model).filter(cast("ColumnElement[bool]", self.model.id == record_id)).first()
-        if not record:
-            logger.warning(f"Attempt to delete non-existent {self.model.__name__}: {record_id}")
-            return None
-
-        setattr(record, "deleted", True)
-        self.db.commit()
-        self.db.refresh(record)
-
-        logger.info(f"{self.model.__name__} marked as deleted: {record.id}")
-        return self.schema_out.model_validate(record, from_attributes=True)
+        record = self.repository.delete(record_id)
+        if record:
+            return self.schema_out.from_orm(record)
+        return None
