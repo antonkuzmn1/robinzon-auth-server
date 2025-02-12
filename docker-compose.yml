@@ -4,6 +4,7 @@ services:
   fastapi:
     image: antonkuzmn1/robinzon-auth-server
     container_name: robinzon-auth-server
+    build: .
     ports:
       - "3002:80"
     restart: always
