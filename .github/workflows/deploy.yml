@@ -23,7 +23,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t antonkuzmn1/robinzon-auth-server .
+          docker build --platform linux/amd64 -t antonkuzmn1/robinzon-auth-server .
 
       - name: Push Docker image to Docker Hub
         run: |
@@ -36,7 +36,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /root/robinzon-auth-server/
+            cd ~/robinzon-auth-server/
             docker pull antonkuzmn1/robinzon-auth-server
             docker-compose down
             docker-compose up -d
