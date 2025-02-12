@@ -3,7 +3,7 @@ version: '3.8'
 services:
   fastapi:
     image: robinzon-auth-server
-    container_name: fastapi-app
+    container_name: robinzon-auth-server
     ports:
-      - "3001:80"
+      - "3002:80"
     restart: always
