@@ -36,6 +36,8 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            mkdir -p ~/robinzon-auth-server
+            scp -i ${{ secrets.SSH_PRIVATE_KEY }} docker-compose.yml ${{ secrets.SSH_USERNAME }}@${{ secrets.HOST }}:~/robinzon-auth-server/
             cd ~/robinzon-auth-server/
             docker pull antonkuzmn1/robinzon-auth-server
             docker-compose down
