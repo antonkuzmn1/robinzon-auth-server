@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, func, Boolean, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
-from app.db import Base
+from app.core.db import Base
 
 admin_company_association = Table(
     "admin_company_association",
