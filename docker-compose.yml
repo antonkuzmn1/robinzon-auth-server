@@ -3,6 +3,8 @@ version: '3.8'
 services:
   fastapi:
     image: antonkuzmn1/robinzon-auth-server
+    env_file:
+      - .env
     container_name: robinzon-auth-server
     build: .
     ports:
